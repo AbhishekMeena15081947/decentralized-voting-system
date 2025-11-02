@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { MantineProvider, Container, Title, Text, Button, Card, Group, Stack, Notification } from '@mantine/core';
+import { MantineProvider, Container, Title, Text, Button, Card, Group, Stack, Notification, Tabs } from '@mantine/core';
 import { Notifications, notifications } from '@mantine/notifications';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
-import { initializeWeb3, voteForCandidate, getCandidate, getCandidateCount, hasVoted, getCurrentAccount } from './utils/contractInteraction';
+import { initializeWeb3, voteForCandidate, getCandidate, getCandidateCount, hasVoted, getCurrentAccount, getContract } from './utils/contractInteraction';
+import VoteAnalytics from './components/VoteAnalytics';
+import AuditLog from './components/AuditLog';
 
 function App() {
   const [account, setAccount] = useState('');
@@ -11,6 +13,9 @@ function App() {
   const [candidates, setCandidates] = useState([]);
   const [userHasVoted, setUserHasVoted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [contract, setContract] = useState(null);
+  const [votingEndTime, setVotingEndTime] = useState(null);
+  const [totalVotes, setTotalVotes] = useState(0);
 
   // Initialize Web3 and check MetaMask connection
   useEffect(() => {
@@ -25,6 +30,8 @@ function App() {
         if (accounts.length > 0) {
           setAccount(accounts[0]);
           setIsConnected(true);
+          const contractInstance = await getContract();
+          setContract(contractInstance);
           await loadCandidates();
           await checkVoteStatus(accounts[0]);
         }
@@ -42,6 +49,8 @@ function App() {
       const address = await signer.getAddress();
       setAccount(address);
       setIsConnected(true);
+      const contractInstance = await getContract();
+      setContract(contractInstance);
       await loadCandidates();
       await checkVoteStatus(address);
       notifications.show({
@@ -66,11 +75,14 @@ function App() {
     try {
       const count = await getCandidateCount();
       const candidateList = [];
+      let total = 0;
       for (let i = 1; i <= count; i++) {
         const candidate = await getCandidate(i);
         candidateList.push({ id: i, ...candidate });
+        total += Number(candidate.voteCount);
       }
       setCandidates(candidateList);
+      setTotalVotes(total);
     } catch (error) {
       console.error('Error loading candidates:', error);
     }
@@ -119,7 +131,7 @@ function App() {
             <Title order={1} ta="center" mb="md">
               Decentralized Voting System
             </Title>
-            <Text ta="center" c="dimmed" size="lg">
+            <Text size="lg" ta="center" c="dimmed">
               Cast your vote securely on the blockchain
             </Text>
           </div>
@@ -128,7 +140,7 @@ function App() {
             <Card shadow="md" padding="xl" radius="md" withBorder>
               <Stack align="center" gap="md">
                 <Text size="lg">Connect your wallet to start voting</Text>
-                <Button onClick={connectWallet} loading={loading} size="lg">
+                <Button size="lg" loading={loading} onClick={connectWallet}>
                   Connect MetaMask
                 </Button>
               </Stack>
@@ -149,31 +161,55 @@ function App() {
                 </Group>
               </Card>
 
-              <Title order={2} mb="md">Candidates</Title>
-              
-              {candidates.length === 0 ? (
-                <Text ta="center" c="dimmed">No candidates available</Text>
-              ) : (
-                <Stack gap="md">
-                  {candidates.map((candidate) => (
-                    <Card key={candidate.id} shadow="sm" padding="lg" radius="md" withBorder>
-                      <Group justify="space-between" wrap="nowrap">
-                        <div>
-                          <Text fw={500} size="lg">{candidate.name}</Text>
-                          <Text size="sm" c="dimmed">Votes: {candidate.voteCount}</Text>
-                        </div>
-                        <Button 
-                          onClick={() => handleVote(candidate.id)}
-                          disabled={userHasVoted || loading}
-                          loading={loading}
-                        >
-                          Vote
-                        </Button>
-                      </Group>
-                    </Card>
-                  ))}
-                </Stack>
-              )}
+              <Tabs defaultValue="voting">
+                <Tabs.List>
+                  <Tabs.Tab value="voting">Cast Vote</Tabs.Tab>
+                  <Tabs.Tab value="analytics">Analytics</Tabs.Tab>
+                  <Tabs.Tab value="audit">Audit Log</Tabs.Tab>
+                </Tabs.List>
+
+                <Tabs.Panel value="voting" pt="md">
+                  <Stack gap="md">
+                    <Title order={2} mb="md">Candidates</Title>
+                    
+                    {candidates.length === 0 ? (
+                      <Text ta="center" c="dimmed">No candidates available</Text>
+                    ) : (
+                      <Stack gap="md">
+                        {candidates.map((candidate) => (
+                          <Card key={candidate.id} shadow="sm" padding="lg" radius="md" withBorder>
+                            <Group justify="space-between" wrap="nowrap">
+                              <div>
+                                <Text fw={500} size="lg">{candidate.name}</Text>
+                                <Text size="sm" c="dimmed">Votes: {candidate.voteCount}</Text>
+                              </div>
+                              <Button
+                                onClick={() => handleVote(candidate.id)}
+                                disabled={userHasVoted || loading}
+                                loading={loading}
+                              >
+                                Vote
+                              </Button>
+                            </Group>
+                          </Card>
+                        ))}
+                      </Stack>
+                    )}
+                  </Stack>
+                </Tabs.Panel>
+
+                <Tabs.Panel value="analytics" pt="md">
+                  <VoteAnalytics 
+                    candidates={candidates}
+                    totalVotes={totalVotes}
+                    votingEndTime={votingEndTime}
+                  />
+                </Tabs.Panel>
+
+                <Tabs.Panel value="audit" pt="md">
+                  <AuditLog contract={contract} />
+                </Tabs.Panel>
+              </Tabs>
             </>
           )}
         </Stack>
