@@ -1,2 +1,7 @@
 Trigger deployment with updated Vercel settings
 Second deployment - output directory now set to 'dist'
+Third deployment - added public/images/ with SVG assets:
+- dashboard-icon.svg
+- vote-icon.svg
+- blockchain-decoration.svg
+Enhanced UI with decorative images and improved styling
