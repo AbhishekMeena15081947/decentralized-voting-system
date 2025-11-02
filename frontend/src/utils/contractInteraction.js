@@ -6,7 +6,7 @@ const CONTRACT_ABI = [
   "function getCandidate(uint256 candidateId) public view returns (string memory name, uint256 voteCount)",
   "function getCandidateCount() public view returns (uint256)",
   "function hasVoted(address voter) public view returns (bool)",
-  "event Voted(address indexed voter, uint256 indexed candidateId)"
+  "event Voted(address indexed voter, uint256 indexed candidateId, uint256 timestamp)"
 ];
 
 // Contract address - Update this with your deployed contract address
@@ -36,6 +36,19 @@ export const initializeWeb3 = async () => {
     return { provider, signer, contract };
   } catch (error) {
     console.error('Error initializing Web3:', error);
+    throw error;
+  }
+};
+
+// Get contract instance
+export const getContract = async () => {
+  try {
+    if (!contract) {
+      await initializeWeb3();
+    }
+    return contract;
+  } catch (error) {
+    console.error('Error getting contract:', error);
     throw error;
   }
 };
@@ -131,8 +144,8 @@ export const listenToVotedEvents = (callback) => {
     if (!contract) {
       throw new Error('Contract not initialized');
     }
-    contract.on('Voted', (voter, candidateId) => {
-      callback({ voter, candidateId: candidateId.toString() });
+    contract.on('Voted', (voter, candidateId, timestamp) => {
+      callback({ voter, candidateId: candidateId.toString(), timestamp: timestamp.toString() });
     });
   } catch (error) {
     console.error('Error listening to events:', error);
