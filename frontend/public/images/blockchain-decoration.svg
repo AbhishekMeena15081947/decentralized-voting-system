@@ -1,0 +1,36 @@
+<svg width="300" height="200" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Blockchain Network Decoration -->
+  <!-- Central node -->
+  <circle cx="150" cy="100" r="15" fill="#8B5CF6" opacity="0.8"/>
+  <circle cx="150" cy="100" r="20" stroke="#8B5CF6" stroke-width="2" fill="none" opacity="0.3"/>
+  
+  <!-- Surrounding nodes -->
+  <circle cx="80" cy="50" r="12" fill="#A78BFA" opacity="0.7"/>
+  <circle cx="220" cy="50" r="12" fill="#A78BFA" opacity="0.7"/>
+  <circle cx="80" cy="150" r="12" fill="#C4B5FD" opacity="0.7"/>
+  <circle cx="220" cy="150" r="12" fill="#C4B5FD" opacity="0.7"/>
+  <circle cx="40" cy="100" r="10" fill="#DDD6FE" opacity="0.7"/>
+  <circle cx="260" cy="100" r="10" fill="#DDD6FE" opacity="0.7"/>
+  
+  <!-- Connection lines -->
+  <line x1="150" y1="100" x2="80" y2="50" stroke="#8B5CF6" stroke-width="2" opacity="0.3" stroke-dasharray="5,5"/>
+  <line x1="150" y1="100" x2="220" y2="50" stroke="#8B5CF6" stroke-width="2" opacity="0.3" stroke-dasharray="5,5"/>
+  <line x1="150" y1="100" x2="80" y2="150" stroke="#8B5CF6" stroke-width="2" opacity="0.3" stroke-dasharray="5,5"/>
+  <line x1="150" y1="100" x2="220" y2="150" stroke="#8B5CF6" stroke-width="2" opacity="0.3" stroke-dasharray="5,5"/>
+  <line x1="150" y1="100" x2="40" y2="100" stroke="#8B5CF6" stroke-width="2" opacity="0.3" stroke-dasharray="5,5"/>
+  <line x1="150" y1="100" x2="260" y2="100" stroke="#8B5CF6" stroke-width="2" opacity="0.3" stroke-dasharray="5,5"/>
+  
+  <!-- Decorative cubes/blocks -->
+  <g opacity="0.6">
+    <polygon points="80,50 85,45 90,50 85,55" fill="#A78BFA"/>
+    <polygon points="220,50 225,45 230,50 225,55" fill="#A78BFA"/>
+    <polygon points="80,150 85,145 90,150 85,155" fill="#C4B5FD"/>
+    <polygon points="220,150 225,145 230,150 225,155" fill="#C4B5FD"/>
+  </g>
+  
+  <!-- Pulsing animation ring -->
+  <circle cx="150" cy="100" r="30" stroke="#8B5CF6" stroke-width="1" fill="none" opacity="0.2">
+    <animate attributeName="r" from="25" to="35" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>
