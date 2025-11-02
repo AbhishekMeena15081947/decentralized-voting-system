@@ -1,1 +1,2 @@
 Trigger deployment with updated Vercel settings
+Second deployment - output directory now set to 'dist'
