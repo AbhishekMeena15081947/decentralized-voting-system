@@ -2,6 +2,8 @@
 
 A beautiful dark-themed Decentralized Voting System built with React (Mantine) and Solidity. This application enables transparent, secure, and tamper-proof voting on the Ethereum blockchain.
 
+URL : https://decentralized-voting-system-alpha.vercel.app/
+
 ![Voting System Banner](https://via.placeholder.com/1200x300/1a1b1e/00d9ff?text=Decentralized+Voting+System)
 
 ## ✨ Features
